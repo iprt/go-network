@@ -13,6 +13,7 @@ var count = 0
 
 func handleConnection(c net.Conn) {
 	fmt.Println(".")
+	defer c.Close()
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if err != nil {
@@ -26,9 +27,8 @@ func handleConnection(c net.Conn) {
 		}
 		fmt.Println(temp)
 		counter := strconv.Itoa(count) + "\n"
-		c.Write([]byte(string(counter)))
+		c.Write([]byte(counter))
 	}
-	c.Close()
 }
 
 func main() {

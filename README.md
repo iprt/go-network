@@ -36,7 +36,10 @@ go run clientMain.go 127.0.0.1:8888
 
 [concServer.go](./tcp/conc/server/concServer.go)
 
-
-## Creat a Reconnectable TCP Client 
+## Creat a Reconnectable TCP Client
 
 [recoClient.go](./tcp/reconnect/client/recoClient.go)
+
+## Create a TCP Proxy
+
+[proxy.go](./tcp/proxy/proxy.go)
