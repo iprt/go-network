@@ -46,6 +46,8 @@ func main() {
 	}
 	defer l.Close()
 
+	fmt.Println("start tcp server at", PORT)
+
 	for {
 		c, err := l.Accept()
 		if err != nil {

@@ -35,3 +35,8 @@ go run clientMain.go 127.0.0.1:8888
 ## Create a Concurrent TCP Server
 
 [concServer.go](./tcp/conc/server/concServer.go)
+
+
+## Creat a Reconnectable TCP Client 
+
+[recoClient.go](./tcp/reconnect/client/recoClient.go)
