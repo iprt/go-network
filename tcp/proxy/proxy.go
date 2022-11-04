@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"strconv"
 )
@@ -65,8 +66,9 @@ func createProxy(lc listenConfig, cc clientConfig) {
 			continue
 		}
 
-		go listenerTransferData(lConn, cConn)
-		go clientTransferData(lConn, cConn)
+		// go listenerTransferData(lConn, cConn)
+		go listenerTransferDataByCopy(lConn, cConn)
+		go clientTransferDataByCopy(lConn, cConn)
 	}
 
 }
@@ -81,7 +83,6 @@ func listenerTransferData(lConn, cConn net.Conn) {
 	for {
 		lReadBuffer := make([]byte, 1024)
 		lLen, lReadErr := lConn.Read(lReadBuffer)
-
 		if lReadErr != nil {
 			fmt.Println("transfer date from listener's client occurred error")
 			return
@@ -99,6 +100,21 @@ func listenerTransferData(lConn, cConn net.Conn) {
 }
 
 //
+// listenerTransferDataByCopy
+//  @Description: implement (user -> listener -> client)
+//  @param lConn
+//  @param cConn
+//
+func listenerTransferDataByCopy(lConn, cConn net.Conn) {
+	for {
+		_, err := io.Copy(cConn, lConn)
+		if err != nil {
+			fmt.Println("transfer date from listener's client occurred error !")
+		}
+	}
+}
+
+//
 // clientTransferData
 //  @Description: implement (user <- listener <- client)
 //  @param lConn
@@ -109,7 +125,7 @@ func clientTransferData(lConn, cConn net.Conn) {
 		cReadBuffer := make([]byte, 1024)
 		cLen, cReadErr := cConn.Read(cReadBuffer)
 		if cReadErr != nil {
-			fmt.Println("transfer date from proxy's server occurred error")
+			fmt.Println("transfer date from proxy's server occurred error !")
 			return
 		} else {
 			if cLen > 0 {
@@ -120,6 +136,21 @@ func clientTransferData(lConn, cConn net.Conn) {
 					return
 				}
 			}
+		}
+	}
+}
+
+//
+// clientTransferDataByCopy
+//  @Description: implement (user <- listener <- client)
+//  @param lConn
+//  @param cConn
+//
+func clientTransferDataByCopy(lConn, cConn net.Conn) {
+	for {
+		_, err := io.Copy(lConn, cConn)
+		if err != nil {
+			fmt.Println("transfer date from proxy's server occurred error !")
 		}
 	}
 }
