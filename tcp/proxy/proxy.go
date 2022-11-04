@@ -8,18 +8,18 @@ import (
 )
 
 //
-//  listenConfig
+//  listenerConfig
 //  @Description: 监听配置
 //
-type listenConfig struct {
+type listenerConfig struct {
 	port int
 }
 
 //
-//  clientConfig
+//  backendConfig
 //  @Description: 请求配置
 //
-type clientConfig struct {
+type backendConfig struct {
 	host string
 	port int
 }
@@ -31,7 +31,7 @@ type clientConfig struct {
 //  @param lc
 //  @param cc
 //
-func createProxy(lc listenConfig, cc clientConfig) {
+func createProxy(lc listenerConfig, cc backendConfig) {
 	fmt.Println("start listening server")
 
 	PORT := ":" + strconv.Itoa(lc.port)
@@ -55,20 +55,23 @@ func createProxy(lc listenConfig, cc clientConfig) {
 			fmt.Println(err)
 			continue
 		}
+
 		// Every time a connection is established, establish a connection to the proxy
 		ccStr := cc.host + ":" + strconv.Itoa(cc.port)
 		fmt.Println("connect to client server", ccStr)
 
-		cConn, err := net.Dial("tcp", ccStr)
+		backConn, err := net.Dial("tcp", ccStr)
 
 		if err != nil {
 			fmt.Println("occurred error when establish a connection to the proxy")
-			continue
+			return
 		}
 
 		// go listenerTransferData(lConn, cConn)
-		go listenerTransferDataByCopy(lConn, cConn)
-		go clientTransferDataByCopy(lConn, cConn)
+		// go clientTransferData(lConn, cConn)
+		go listenerTransferDataByCopy(lConn, backConn)
+		go backendTransferDataByCopy(lConn, backConn)
+
 	}
 
 }
@@ -77,18 +80,18 @@ func createProxy(lc listenConfig, cc clientConfig) {
 // listenerTransferData
 //  @Description: implement (user -> listener -> client)
 //  @param lConn
-//  @param cConn
+//  @param backConn
 //
-func listenerTransferData(lConn, cConn net.Conn) {
+func listenerTransferData(lConn, backConn net.Conn) {
+	lReadBuffer := make([]byte, 4096)
 	for {
-		lReadBuffer := make([]byte, 1024)
 		lLen, lReadErr := lConn.Read(lReadBuffer)
 		if lReadErr != nil {
 			fmt.Println("transfer date from listener's client occurred error")
 			return
 		} else {
 			if lLen > 0 {
-				_, lWriteErr := cConn.Write(lReadBuffer[:lLen])
+				_, lWriteErr := backConn.Write(lReadBuffer[:lLen])
 				fmt.Printf("transfer data to client (bytes's length is %d)\n", lLen)
 				if lWriteErr != nil {
 					fmt.Println("transfer data to client occurred error !!!")
@@ -103,28 +106,26 @@ func listenerTransferData(lConn, cConn net.Conn) {
 // listenerTransferDataByCopy
 //  @Description: implement (user -> listener -> client)
 //  @param lConn
-//  @param cConn
+//  @param backConn
 //
-func listenerTransferDataByCopy(lConn, cConn net.Conn) {
-	for {
-		_, err := io.Copy(cConn, lConn)
-		if err != nil {
-			fmt.Println("transfer date from listener's client occurred error !")
-			return
-		}
+func listenerTransferDataByCopy(lConn, backConn net.Conn) {
+	_, err := io.Copy(backConn, lConn)
+	if err != nil {
+		fmt.Println("transfer date from listener's client occurred error !")
+		return
 	}
 }
 
 //
-// clientTransferData
+// backendTransferData
 //  @Description: implement (user <- listener <- client)
 //  @param lConn
-//  @param cConn
+//  @param backConn
 //
-func clientTransferData(lConn, cConn net.Conn) {
+func backendTransferData(lConn, backConn net.Conn) {
+	cReadBuffer := make([]byte, 4096)
 	for {
-		cReadBuffer := make([]byte, 1024)
-		cLen, cReadErr := cConn.Read(cReadBuffer)
+		cLen, cReadErr := backConn.Read(cReadBuffer)
 		if cReadErr != nil {
 			fmt.Println("transfer date from proxy's server occurred error !")
 			return
@@ -142,17 +143,15 @@ func clientTransferData(lConn, cConn net.Conn) {
 }
 
 //
-// clientTransferDataByCopy
+// backendTransferDataByCopy
 //  @Description: implement (user <- listener <- client)
 //  @param lConn
-//  @param cConn
+//  @param backConn
 //
-func clientTransferDataByCopy(lConn, cConn net.Conn) {
-	for {
-		_, err := io.Copy(lConn, cConn)
-		if err != nil {
-			fmt.Println("transfer date from proxy's server occurred error !")
-			return
-		}
+func backendTransferDataByCopy(lConn, backConn net.Conn) {
+	_, err := io.Copy(lConn, backConn)
+	if err != nil {
+		fmt.Println("transfer date from proxy's server occurred error !")
+		return
 	}
 }
