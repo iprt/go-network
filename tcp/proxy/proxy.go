@@ -110,6 +110,7 @@ func listenerTransferDataByCopy(lConn, cConn net.Conn) {
 		_, err := io.Copy(cConn, lConn)
 		if err != nil {
 			fmt.Println("transfer date from listener's client occurred error !")
+			return
 		}
 	}
 }
@@ -151,6 +152,7 @@ func clientTransferDataByCopy(lConn, cConn net.Conn) {
 		_, err := io.Copy(lConn, cConn)
 		if err != nil {
 			fmt.Println("transfer date from proxy's server occurred error !")
+			return
 		}
 	}
 }
