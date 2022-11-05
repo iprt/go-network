@@ -42,4 +42,7 @@ go run clientMain.go 127.0.0.1:8888
 
 ## Create a TCP Proxy
 
-[proxy.go](./tcp/proxy/proxy.go)
+没有加入channel的实现 [proxy.go](./tcp/proxy/proxy.go)
+
+加入了channel的实现 [proxy.go](tcp/proxy2/proxy.go)
+
