@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"strconv"
 )
@@ -80,8 +81,8 @@ func handleConnection(conn net.Conn, bConfig backendConfig) {
 
 	exit := make(chan bool, 1)
 
-	go transfer(conn, proxyConn, exit)
-	go transfer(proxyConn, conn, exit)
+	go transferByIoCopy(conn, proxyConn, exit)
+	go transferByIoCopy(proxyConn, conn, exit)
 	<-exit
 
 	fmt.Println("Proxy occurred error, and then exit")
@@ -109,5 +110,21 @@ func transfer(from, to net.Conn, exit chan bool) {
 			exit <- true
 			return
 		}
+	}
+}
+
+//
+// transferByIoCopy
+//  @Description: reference https://www.cnblogs.com/mignet/p/go_transfer.html
+//  @param from
+//  @param to
+//  @param exit
+//
+func transferByIoCopy(from, to net.Conn, exit chan bool) {
+	_, err := io.Copy(to, from)
+	if err != nil {
+		fmt.Println(err)
+		exit <- true
+		return
 	}
 }
