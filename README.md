@@ -46,7 +46,7 @@ implement without chan [proxy.go](./tcp/proxy/proxy.go)
 
 implement with chan [proxy.go](tcp/proxy2/proxy.go)
 
-## tcp delimiter 解决分包问题
+## delimiter: solve the problem of tcp sticky packets
 
 [delimiterServer.go](tcp/delimiter/server/delimiterServer.go)
 
