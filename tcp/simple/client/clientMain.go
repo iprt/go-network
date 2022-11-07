@@ -10,12 +10,16 @@ import (
 
 func main() {
 	arguments := os.Args
+
+	var CONNECT string
 	if len(arguments) == 1 {
 		fmt.Println("Please provide host:port.")
-		return
+		// return
+		CONNECT = "127.0.0.1:1234"
+	} else {
+		CONNECT = arguments[1]
 	}
 
-	CONNECT := arguments[1]
 	c, err := net.Dial("tcp", CONNECT)
 	if err != nil {
 		fmt.Println(err)

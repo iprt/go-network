@@ -11,12 +11,17 @@ import (
 
 func main() {
 	arguments := os.Args
+
+	var PORT string
+
 	if len(arguments) == 1 {
 		fmt.Println("Please provide port number")
-		return
+		// return
+		PORT = ":1234"
+	} else {
+		PORT = ":" + arguments[1]
 	}
 
-	PORT := ":" + arguments[1]
 	l, err := net.Listen("tcp", PORT)
 	if err != nil {
 		fmt.Println(err)

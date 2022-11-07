@@ -42,7 +42,13 @@ go run clientMain.go 127.0.0.1:8888
 
 ## Create a TCP Proxy
 
-没有加入channel的实现 [proxy.go](./tcp/proxy/proxy.go)
+implement without chan [proxy.go](./tcp/proxy/proxy.go)
 
-加入了channel的实现 [proxy.go](tcp/proxy2/proxy.go)
+implement with chan [proxy.go](tcp/proxy2/proxy.go)
+
+## tcp delimiter 解决分包问题
+
+[delimiterServer.go](tcp/delimiter/server/delimiterServer.go)
+
+[delimiterClient.go](tcp/delimiter/client/delimiterClient.go)
 
