@@ -80,6 +80,7 @@ func main() {
 	pack.Length = 8 + 2 + pack.HostnameLength + 2 + pack.TagLength + int16(len(pack.Msg))
 
 	buf := new(bytes.Buffer)
+
 	// 写入四次，模拟TCP粘包效果
 	pack.Pack(buf)
 	pack.Pack(buf)
