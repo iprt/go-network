@@ -29,11 +29,10 @@ func main() {
 	}
 }
 
-//
 // process
-//  @Description: 边界符解决粘包问题
-//  @param conn
 //
+//	@Description: 边界符解决粘包问题
+//	@param conn
 func process(conn net.Conn) {
 	reader := bufio.NewReader(conn)
 	defer conn.Close()

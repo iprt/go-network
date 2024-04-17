@@ -7,30 +7,25 @@ import (
 	"strconv"
 )
 
-//
-//  listenerConfig
-//  @Description: 监听配置
-//
+// listenerConfig
+// @Description: 监听配置
 type listenerConfig struct {
 	port int
 }
 
-//
-//  backendConfig
-//  @Description: 请求配置
-//
+// backendConfig
+// @Description: 请求配置
 type backendConfig struct {
 	host string
 	port int
 }
 
-//
 // createProxy
-//  @Description: user -> listener -> client
-//                user <- listener <- client
-//  @param lc
-//  @param cc
 //
+//	@Description: user -> listener -> client
+//	              user <- listener <- client
+//	@param lc
+//	@param cc
 func createProxy(lc listenerConfig, cc backendConfig) {
 	fmt.Println("start listening server")
 
@@ -76,12 +71,11 @@ func createProxy(lc listenerConfig, cc backendConfig) {
 
 }
 
-//
 // listenerTransferData
-//  @Description: implement (user -> listener -> client)
-//  @param lConn
-//  @param backConn
 //
+//	@Description: implement (user -> listener -> client)
+//	@param lConn
+//	@param backConn
 func listenerTransferData(lConn, backConn net.Conn) {
 	lReadBuffer := make([]byte, 4096)
 	for {
@@ -102,12 +96,11 @@ func listenerTransferData(lConn, backConn net.Conn) {
 	}
 }
 
-//
 // listenerTransferDataByCopy
-//  @Description: implement (user -> listener -> client)
-//  @param lConn
-//  @param backConn
 //
+//	@Description: implement (user -> listener -> client)
+//	@param lConn
+//	@param backConn
 func listenerTransferDataByCopy(lConn, backConn net.Conn) {
 	_, err := io.Copy(backConn, lConn)
 	if err != nil {
@@ -116,12 +109,11 @@ func listenerTransferDataByCopy(lConn, backConn net.Conn) {
 	}
 }
 
-//
 // backendTransferData
-//  @Description: implement (user <- listener <- client)
-//  @param lConn
-//  @param backConn
 //
+//	@Description: implement (user <- listener <- client)
+//	@param lConn
+//	@param backConn
 func backendTransferData(lConn, backConn net.Conn) {
 	cReadBuffer := make([]byte, 4096)
 	for {
@@ -142,12 +134,11 @@ func backendTransferData(lConn, backConn net.Conn) {
 	}
 }
 
-//
 // backendTransferDataByCopy
-//  @Description: implement (user <- listener <- client)
-//  @param lConn
-//  @param backConn
 //
+//	@Description: implement (user <- listener <- client)
+//	@param lConn
+//	@param backConn
 func backendTransferDataByCopy(lConn, backConn net.Conn) {
 	_, err := io.Copy(lConn, backConn)
 	if err != nil {

@@ -7,29 +7,24 @@ import (
 	"strconv"
 )
 
-//
-//  listenerConfig
-//  @Description: 监听配置
-//
+// listenerConfig
+// @Description: 监听配置
 type listenerConfig struct {
 	port int
 }
 
-//
-//  backendConfig
-//  @Description: 请求配置
-//
+// backendConfig
+// @Description: 请求配置
 type backendConfig struct {
 	host string
 	port int
 }
 
-//
 // creatProxy
-//  @Description: 创建tcp代理
-//  @param lConfig
-//  @param bConfig
 //
+//	@Description: 创建tcp代理
+//	@param lConfig
+//	@param bConfig
 func createProxy(lConfig listenerConfig, bConfig backendConfig) {
 	address := ":" + strconv.Itoa(lConfig.port)
 
@@ -60,12 +55,11 @@ func createProxy(lConfig listenerConfig, bConfig backendConfig) {
 
 }
 
-//
 // handleConnection
-//  @Description: 处理客户端的连接
-//  @param conn
-//  @param config
 //
+//	@Description: 处理客户端的连接
+//	@param conn
+//	@param config
 func handleConnection(conn net.Conn, bConfig backendConfig) {
 	defer conn.Close()
 
@@ -88,12 +82,11 @@ func handleConnection(conn net.Conn, bConfig backendConfig) {
 	fmt.Println("Proxy occurred error, and then exit")
 }
 
-//
 // transfer
-//  @Description: 传输数据
-//  @param from
-//  @param to
 //
+//	@Description: 传输数据
+//	@param from
+//	@param to
 func transfer(from, to net.Conn, exit chan bool) {
 	buffer := make([]byte, 4096)
 	for {
@@ -113,13 +106,12 @@ func transfer(from, to net.Conn, exit chan bool) {
 	}
 }
 
-//
 // transferByIoCopy
-//  @Description: reference https://www.cnblogs.com/mignet/p/go_transfer.html
-//  @param from
-//  @param to
-//  @param exit
 //
+//	@Description: reference https://www.cnblogs.com/mignet/p/go_transfer.html
+//	@param from
+//	@param to
+//	@param exit
 func transferByIoCopy(from, to net.Conn, exit chan bool) {
 	_, err := io.Copy(to, from)
 	if err != nil {
