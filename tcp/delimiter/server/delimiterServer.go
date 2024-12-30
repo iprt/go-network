@@ -35,7 +35,12 @@ func main() {
 //	@param conn
 func process(conn net.Conn) {
 	reader := bufio.NewReader(conn)
-	defer conn.Close()
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(conn)
 	for {
 		// 读取的是字节
 		buffer, err := reader.ReadSlice(delimiter.DELIMITER)

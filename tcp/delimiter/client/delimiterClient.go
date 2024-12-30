@@ -24,7 +24,12 @@ func main() {
 }
 
 func process(conn net.Conn) {
-	defer conn.Close()
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(conn)
 	exit := make(chan bool)
 	go handleWrite(conn, exit)
 	go handleRead(conn, exit)

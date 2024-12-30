@@ -34,7 +34,12 @@ func main() {
 		return
 	}
 
-	defer connection.Close()
+	defer func(connection *net.UDPConn) {
+		err := connection.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(connection)
 	buffer := make([]byte, 1024)
 	rand.Seed(time.Now().Unix())
 

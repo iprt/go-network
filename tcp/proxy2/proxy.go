@@ -61,7 +61,12 @@ func createProxy(lConfig listenerConfig, bConfig backendConfig) {
 //	@param conn
 //	@param config
 func handleConnection(conn net.Conn, bConfig backendConfig) {
-	defer conn.Close()
+	defer func(conn net.Conn) {
+		err := conn.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(conn)
 
 	proxyAddress := bConfig.host + ":" + strconv.Itoa(bConfig.port)
 
@@ -71,7 +76,12 @@ func handleConnection(conn net.Conn, bConfig backendConfig) {
 		return
 	}
 
-	defer proxyConn.Close()
+	defer func(proxyConn net.Conn) {
+		err := proxyConn.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(proxyConn)
 
 	exit := make(chan bool, 1)
 

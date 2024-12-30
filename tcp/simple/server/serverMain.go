@@ -27,7 +27,12 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	defer l.Close()
+	defer func(l net.Listener) {
+		err := l.Close()
+		if err != nil {
+			fmt.Println("listener close occurred error")
+		}
+	}(l)
 
 	c, err := l.Accept()
 	if err != nil {

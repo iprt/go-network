@@ -27,7 +27,12 @@ func main() {
 			fmt.Println(err)
 		} else {
 			fmt.Println("connect", CONNECT, "success")
-			defer conn.Close()
+			defer func(conn net.Conn) {
+				err := conn.Close()
+				if err != nil {
+					fmt.Println(err)
+				}
+			}(conn)
 			handleConnection(conn)
 		}
 
