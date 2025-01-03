@@ -28,7 +28,14 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	defer l.Close()
+
+	defer func(l net.Listener) {
+		err := l.Close()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}(l)
 
 	fmt.Println("start tcp server at", PORT)
 
@@ -45,7 +52,13 @@ func main() {
 
 func handleConnection(c net.Conn) {
 	fmt.Println(".")
-	defer c.Close()
+	defer func(c net.Conn) {
+		err := c.Close()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}(c)
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if err != nil {
